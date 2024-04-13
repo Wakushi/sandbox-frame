@@ -10,6 +10,7 @@ const handleRequest = landingFrame(async (ctx) => {
         Go to fight
       </Button>,
     ],
+    textInput: "Enter your name",
   }
 })
 
