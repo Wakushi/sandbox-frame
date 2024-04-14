@@ -1,15 +1,14 @@
 export const dynamic = "force-dynamic"
 import { NextRequest } from "next/server"
-import sharp from "sharp"
-import satori from "satori"
 import XPBar from "@/lib/xp-bar"
+import { getOptimizedFrame } from "@/utils"
 
 export async function GET(req: NextRequest): Promise<Response> {
   const requestURL = req.url
   const searchParams = new URLSearchParams(requestURL.split("?")[1])
   const username = searchParams.get("username")
 
-  let frameImage: any = (
+  const frameImage = (
     <div
       style={{
         display: "flex",
@@ -41,6 +40,16 @@ export async function GET(req: NextRequest): Promise<Response> {
           height: "100%",
         }}
       >
+        <div
+          style={{
+            display: "flex",
+          }}
+        >
+          <Monster />
+          <Monster />
+          <Monster />
+          <Monster />
+        </div>
         <p
           style={{
             zIndex: 100,
@@ -54,30 +63,21 @@ export async function GET(req: NextRequest): Promise<Response> {
           {username}
         </p>
         <XPBar currentXp={100} currentLevel={1} />
+        <div
+          style={{
+            display: "flex",
+          }}
+        >
+          <Monster />
+          <Monster />
+          <Monster />
+          <Monster />
+        </div>
       </div>
     </div>
   )
 
-  const jerseyFontResponse = await fetch(
-    `http://localhost:3000/fonts/Jersey20-Regular.ttf`
-  )
-  const jerseyFont = await jerseyFontResponse.arrayBuffer()
-
-  const svg = await satori(frameImage, {
-    width: 1200,
-    height: 600,
-    fonts: [
-      {
-        name: "Jersey20-Regular.ttf",
-        data: jerseyFont,
-        weight: 700,
-        style: "normal",
-      },
-    ],
-  })
-  const svgBuffer = Buffer.from(svg)
-  const png = sharp(svgBuffer).png()
-  const response = await png.toBuffer()
+  const response = await getOptimizedFrame(frameImage)
 
   return new Response(response, {
     status: 200,
@@ -86,4 +86,26 @@ export async function GET(req: NextRequest): Promise<Response> {
       "Cache-Control": "public, max-age=0",
     },
   })
+}
+
+function Monster() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        width: "200px",
+        height: "200px",
+      }}
+    >
+      <img
+        src="https://global.discourse-cdn.com/bubble/original/3X/b/8/b8766ed95f283df29e94fc8304b9c2d93dd2add8.png"
+        alt="monster"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+    </div>
+  )
 }

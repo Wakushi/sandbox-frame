@@ -1,6 +1,9 @@
 /* eslint-disable react/jsx-key */
-import { Button } from "frames.js/next"
-import { landingFrame } from "./landing"
+import { Button, createFrames } from "frames.js/next"
+
+const landingFrame = createFrames({
+  basePath: "/landing",
+})
 
 const handleRequest = landingFrame(async (ctx) => {
   return {
